@@ -1,0 +1,1349 @@
+{
+  "info": {
+    "name": "AI Travel Video Service",
+    "description": "Import the local environment. Fill only the service API key. Provider-capable requests are skipped unless allowProviderRequests is explicitly true and the worker is configured accordingly. Keep it false for Collection Runner.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 - Health",
+      "item": [
+        {
+          "name": "Health Live",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Health payload\", () => pm.expect(pm.response.json().status).to.equal(\"ok\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/health/live"
+          }
+        },
+        {
+          "name": "Health Ready",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Health payload\", () => pm.expect(pm.response.json().status).to.equal(\"ready\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/health/ready"
+          }
+        },
+        {
+          "name": "OpenAPI",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API paths published\", () => pm.expect(pm.response.json().paths).to.have.property(\"/api/v1/videos/generate\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/openapi.json"
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Assets",
+      "item": [
+        {
+          "name": "Upload Image",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) {",
+                  "    const assetId = pm.response.json().assetId;",
+                  "    pm.test(\"Asset ID returned\", () => pm.expect(assetId).to.be.a(\"string\"));",
+                  "    pm.environment.set(\"assetId\", assetId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "image/jpeg"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/assets",
+            "description": "Select the local file in Body → binary. Match Content-Type to its actual format.",
+            "body": {
+              "mode": "file",
+              "file": {
+                "src": ""
+              }
+            }
+          }
+        },
+        {
+          "name": "Upload Second Reference",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) {",
+                  "    const assetId = pm.response.json().assetId;",
+                  "    pm.test(\"Asset ID returned\", () => pm.expect(assetId).to.be.a(\"string\"));",
+                  "    pm.environment.set(\"secondAssetId\", assetId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "image/jpeg"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/assets",
+            "description": "Select the local file in Body → binary. Match Content-Type to its actual format.",
+            "body": {
+              "mode": "file",
+              "file": {
+                "src": ""
+              }
+            }
+          }
+        },
+        {
+          "name": "Upload Video",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) {",
+                  "    const assetId = pm.response.json().assetId;",
+                  "    pm.test(\"Asset ID returned\", () => pm.expect(assetId).to.be.a(\"string\"));",
+                  "    pm.environment.set(\"videoAssetId\", assetId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "video/mp4"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/assets",
+            "description": "Select the local file in Body → binary. Match Content-Type to its actual format.",
+            "body": {
+              "mode": "file",
+              "file": {
+                "src": ""
+              }
+            }
+          }
+        },
+        {
+          "name": "Upload Background Music",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) {",
+                  "    const assetId = pm.response.json().assetId;",
+                  "    pm.test(\"Asset ID returned\", () => pm.expect(assetId).to.be.a(\"string\"));",
+                  "    pm.environment.set(\"musicAssetId\", assetId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "audio/wav"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/assets",
+            "description": "Select the local file in Body → binary. Match Content-Type to its actual format.",
+            "body": {
+              "mode": "file",
+              "file": {
+                "src": ""
+              }
+            }
+          }
+        },
+        {
+          "name": "Upload Custom Voiceover",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) {",
+                  "    const assetId = pm.response.json().assetId;",
+                  "    pm.test(\"Asset ID returned\", () => pm.expect(assetId).to.be.a(\"string\"));",
+                  "    pm.environment.set(\"voiceoverAssetId\", assetId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "audio/wav"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/assets",
+            "description": "Select the local file in Body → binary. Match Content-Type to its actual format.",
+            "body": {
+              "mode": "file",
+              "file": {
+                "src": ""
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - LOCAL Offline",
+      "item": [
+        {
+          "name": "Generate LOCAL Video",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"offlineWorkerConfirmed\") !== \"true\") pm.execution.skipRequest();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 202\", () => pm.response.to.have.status(202));",
+                  "if (pm.response.code === 202) {",
+                  "    const result = pm.response.json();",
+                  "    pm.test(\"Job ID returned\", () => pm.expect(result.jobId).to.be.a(\"string\"));",
+                  "    pm.environment.set(\"jobId\", result.jobId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/generate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"{{requestId}}-local\",\n  \"productId\": \"{{productId}}\",\n  \"tour\": {\n    \"title\": \"Khám phá Đà Nẵng\",\n    \"destination\": \"Đà Nẵng\",\n    \"highlights\": [\n      \"Sơn Trà\",\n      \"Mỹ Khê\"\n    ],\n    \"priceVnd\": 2990000,\n    \"callToAction\": \"Liên hệ đặt tour\"\n  },\n  \"images\": [\n    \"{{assetId}}\"\n  ],\n  \"config\": {\n    \"mode\": \"LOCAL\",\n    \"durationSeconds\": 40,\n    \"aspectRatio\": \"16:9\"\n  },\n  \"narration\": {\n    \"enabled\": false\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Generate LOCAL Video with TTS",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"offlineWorkerConfirmed\") !== \"true\") pm.execution.skipRequest();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 202\", () => pm.response.to.have.status(202));",
+                  "if (pm.response.code === 202) {",
+                  "    const result = pm.response.json();",
+                  "    pm.test(\"Job ID returned\", () => pm.expect(result.jobId).to.be.a(\"string\"));",
+                  "    pm.environment.set(\"jobId\", result.jobId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/generate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"{{requestId}}-tts\",\n  \"productId\": \"{{productId}}\",\n  \"tour\": {\n    \"title\": \"Khám phá Đà Nẵng\",\n    \"destination\": \"Đà Nẵng\",\n    \"highlights\": [\n      \"Sơn Trà\",\n      \"Mỹ Khê\"\n    ],\n    \"priceVnd\": 2990000,\n    \"callToAction\": \"Liên hệ đặt tour\"\n  },\n  \"images\": [\n    \"{{assetId}}\"\n  ],\n  \"config\": {\n    \"mode\": \"LOCAL\",\n    \"durationSeconds\": 40,\n    \"aspectRatio\": \"16:9\"\n  },\n  \"narration\": {\n    \"enabled\": true,\n    \"subtitles\": true\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Generate LOCAL Video with Custom Narration",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"offlineWorkerConfirmed\") !== \"true\") pm.execution.skipRequest();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 202\", () => pm.response.to.have.status(202));",
+                  "if (pm.response.code === 202) {",
+                  "    const result = pm.response.json();",
+                  "    pm.test(\"Job ID returned\", () => pm.expect(result.jobId).to.be.a(\"string\"));",
+                  "    pm.environment.set(\"jobId\", result.jobId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/generate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"{{requestId}}-custom\",\n  \"productId\": \"{{productId}}\",\n  \"tour\": {\n    \"title\": \"Khám phá Đà Nẵng\",\n    \"destination\": \"Đà Nẵng\",\n    \"highlights\": [\n      \"Sơn Trà\",\n      \"Mỹ Khê\"\n    ],\n    \"priceVnd\": 2990000,\n    \"callToAction\": \"Liên hệ đặt tour\"\n  },\n  \"images\": [\n    \"{{assetId}}\"\n  ],\n  \"config\": {\n    \"mode\": \"LOCAL\",\n    \"durationSeconds\": 40,\n    \"aspectRatio\": \"16:9\"\n  },\n  \"narration\": {\n    \"enabled\": true,\n    \"sceneTexts\": [\n      \"Cùng khám phá Đà Nẵng.\",\n      \"Mời bạn ghé Sơn Trà.\"\n    ],\n    \"subtitles\": true\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Generate Portrait Video",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"offlineWorkerConfirmed\") !== \"true\") pm.execution.skipRequest();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 202\", () => pm.response.to.have.status(202));",
+                  "if (pm.response.code === 202) {",
+                  "    const result = pm.response.json();",
+                  "    pm.test(\"Job ID returned\", () => pm.expect(result.jobId).to.be.a(\"string\"));",
+                  "    pm.environment.set(\"jobId\", result.jobId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/generate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"{{requestId}}-portrait\",\n  \"productId\": \"{{productId}}\",\n  \"tour\": {\n    \"title\": \"Khám phá Đà Nẵng\",\n    \"destination\": \"Đà Nẵng\",\n    \"highlights\": [\n      \"Sơn Trà\",\n      \"Mỹ Khê\"\n    ],\n    \"priceVnd\": 2990000,\n    \"callToAction\": \"Liên hệ đặt tour\"\n  },\n  \"images\": [\n    \"{{assetId}}\"\n  ],\n  \"config\": {\n    \"mode\": \"LOCAL\",\n    \"durationSeconds\": 35,\n    \"aspectRatio\": \"9:16\"\n  },\n  \"narration\": {\n    \"enabled\": true\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Generate with Uploaded Voice and Music",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"offlineWorkerConfirmed\") !== \"true\") pm.execution.skipRequest();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 202\", () => pm.response.to.have.status(202));",
+                  "if (pm.response.code === 202) {",
+                  "    const result = pm.response.json();",
+                  "    pm.test(\"Job ID returned\", () => pm.expect(result.jobId).to.be.a(\"string\"));",
+                  "    pm.environment.set(\"jobId\", result.jobId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/generate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"{{requestId}}-voice\",\n  \"productId\": \"{{productId}}\",\n  \"tour\": {\n    \"title\": \"Khám phá Đà Nẵng\",\n    \"destination\": \"Đà Nẵng\",\n    \"highlights\": [\n      \"Sơn Trà\",\n      \"Mỹ Khê\"\n    ],\n    \"priceVnd\": 2990000,\n    \"callToAction\": \"Liên hệ đặt tour\"\n  },\n  \"images\": [\n    \"{{assetId}}\"\n  ],\n  \"config\": {\n    \"mode\": \"LOCAL\",\n    \"durationSeconds\": 40,\n    \"aspectRatio\": \"16:9\"\n  },\n  \"voiceover\": \"{{voiceoverAssetId}}\",\n  \"backgroundMusic\": \"{{musicAssetId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Generate from HTTPS Image",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"offlineWorkerConfirmed\") !== \"true\") pm.execution.skipRequest();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 202\", () => pm.response.to.have.status(202));",
+                  "if (pm.response.code === 202) {",
+                  "    const result = pm.response.json();",
+                  "    pm.test(\"Job ID returned\", () => pm.expect(result.jobId).to.be.a(\"string\"));",
+                  "    pm.environment.set(\"jobId\", result.jobId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/generate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"{{requestId}}-remote-image\",\n  \"productId\": \"{{productId}}\",\n  \"tour\": {\n    \"title\": \"Khám phá Đà Nẵng\",\n    \"destination\": \"Đà Nẵng\",\n    \"highlights\": [\n      \"Sơn Trà\",\n      \"Mỹ Khê\"\n    ],\n    \"priceVnd\": 2990000,\n    \"callToAction\": \"Liên hệ đặt tour\"\n  },\n  \"images\": [\n    \"{{imageUrl}}\"\n  ],\n  \"config\": {\n    \"mode\": \"LOCAL\",\n    \"durationSeconds\": 40,\n    \"aspectRatio\": \"16:9\"\n  },\n  \"narration\": {\n    \"enabled\": false\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Groq AI Director",
+      "item": [
+        {
+          "name": "Generate LOCAL Video with Groq",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"allowProviderRequests\") !== \"true\") {",
+                  "    pm.execution.skipRequest();",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 202\", () => pm.response.to.have.status(202));",
+                  "if (pm.response.code === 202) {",
+                  "    const result = pm.response.json();",
+                  "    pm.test(\"Job ID returned\", () => pm.expect(result.jobId).to.be.a(\"string\"));",
+                  "    pm.environment.set(\"jobId\", result.jobId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/generate",
+            "description": "Requires worker AI_DIRECTOR_ENABLED=true and approved Groq account usage. This may consume quota.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"{{requestId}}-groq\",\n  \"productId\": \"{{productId}}\",\n  \"tour\": {\n    \"title\": \"Khám phá Đà Nẵng\",\n    \"destination\": \"Đà Nẵng\",\n    \"highlights\": [\n      \"Sơn Trà\",\n      \"Mỹ Khê\"\n    ],\n    \"priceVnd\": 2990000,\n    \"callToAction\": \"Liên hệ đặt tour\"\n  },\n  \"images\": [\n    \"{{assetId}}\"\n  ],\n  \"config\": {\n    \"mode\": \"LOCAL\",\n    \"durationSeconds\": 40,\n    \"aspectRatio\": \"16:9\"\n  },\n  \"narration\": {\n    \"enabled\": true\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 - HYBRID",
+      "item": [
+        {
+          "name": "Generate HYBRID Video with Local TTS",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"allowProviderRequests\") !== \"true\") {",
+                  "    pm.execution.skipRequest();",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 202\", () => pm.response.to.have.status(202));",
+                  "if (pm.response.code === 202) {",
+                  "    const result = pm.response.json();",
+                  "    pm.test(\"Job ID returned\", () => pm.expect(result.jobId).to.be.a(\"string\"));",
+                  "    pm.environment.set(\"jobId\", result.jobId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/generate",
+            "description": "Potentially billable. Enable guard only after approval.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"{{requestId}}-hybrid-tts\",\n  \"productId\": \"{{productId}}\",\n  \"tour\": {\n    \"title\": \"Khám phá Đà Nẵng\",\n    \"destination\": \"Đà Nẵng\",\n    \"highlights\": [\n      \"Sơn Trà\",\n      \"Mỹ Khê\"\n    ],\n    \"priceVnd\": 2990000,\n    \"callToAction\": \"Liên hệ đặt tour\"\n  },\n  \"images\": [\n    \"{{assetId}}\"\n  ],\n  \"config\": {\n    \"mode\": \"HYBRID\",\n    \"durationSeconds\": 40,\n    \"aspectRatio\": \"16:9\"\n  },\n  \"aiScenes\": 1,\n  \"maxAiCostUsd\": \"0.1250\",\n  \"allowLocalFallback\": false,\n  \"narration\": {\n    \"enabled\": true\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "HYBRID One AI Scene",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"allowProviderRequests\") !== \"true\") {",
+                  "    pm.execution.skipRequest();",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 202\", () => pm.response.to.have.status(202));",
+                  "if (pm.response.code === 202) {",
+                  "    const result = pm.response.json();",
+                  "    pm.test(\"Job ID returned\", () => pm.expect(result.jobId).to.be.a(\"string\"));",
+                  "    pm.environment.set(\"jobId\", result.jobId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/generate",
+            "description": "One 720p/5s clip without audio. Estimated USD 0.1250. Requires approval.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"{{requestId}}-one\",\n  \"productId\": \"{{productId}}\",\n  \"tour\": {\n    \"title\": \"Khám phá Đà Nẵng\",\n    \"destination\": \"Đà Nẵng\",\n    \"highlights\": [\n      \"Sơn Trà\",\n      \"Mỹ Khê\"\n    ],\n    \"priceVnd\": 2990000,\n    \"callToAction\": \"Liên hệ đặt tour\"\n  },\n  \"images\": [\n    \"{{assetId}}\"\n  ],\n  \"config\": {\n    \"mode\": \"HYBRID\",\n    \"durationSeconds\": 40,\n    \"aspectRatio\": \"16:9\"\n  },\n  \"aiScenes\": 1,\n  \"maxAiCostUsd\": \"0.1250\",\n  \"allowLocalFallback\": false,\n  \"narration\": {\n    \"enabled\": true\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "HYBRID Two AI Scenes",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"allowProviderRequests\") !== \"true\") {",
+                  "    pm.execution.skipRequest();",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 202\", () => pm.response.to.have.status(202));",
+                  "if (pm.response.code === 202) {",
+                  "    const result = pm.response.json();",
+                  "    pm.test(\"Job ID returned\", () => pm.expect(result.jobId).to.be.a(\"string\"));",
+                  "    pm.environment.set(\"jobId\", result.jobId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/generate",
+            "description": "Two potentially billable clips and two distinct references. Requires approval.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"{{requestId}}-two\",\n  \"productId\": \"{{productId}}\",\n  \"tour\": {\n    \"title\": \"Khám phá Đà Nẵng\",\n    \"destination\": \"Đà Nẵng\",\n    \"highlights\": [\n      \"Sơn Trà\",\n      \"Mỹ Khê\"\n    ],\n    \"priceVnd\": 2990000,\n    \"callToAction\": \"Liên hệ đặt tour\"\n  },\n  \"images\": [\n    \"{{assetId}}\",\n    \"{{secondAssetId}}\"\n  ],\n  \"config\": {\n    \"mode\": \"HYBRID\",\n    \"durationSeconds\": 40,\n    \"aspectRatio\": \"16:9\"\n  },\n  \"aiScenes\": 2,\n  \"maxAiCostUsd\": \"0.2500\",\n  \"allowLocalFallback\": false,\n  \"narration\": {\n    \"enabled\": true\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "HYBRID Budget Validation",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"allowProviderRequests\") !== \"true\") {",
+                  "    pm.execution.skipRequest();",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 202\", () => pm.response.to.have.status(202));",
+                  "if (pm.response.code === 202) {",
+                  "    const result = pm.response.json();",
+                  "    pm.test(\"Job ID returned\", () => pm.expect(result.jobId).to.be.a(\"string\"));",
+                  "    pm.environment.set(\"jobId\", result.jobId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/generate",
+            "description": "Use an isolated mock/dry-run worker. Submission returns 202; without Director, poll for AI_BUDGET_EXCEEDED. Director can select a local-only plan when the budget does not permit any AI clips.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"{{requestId}}-budget\",\n  \"productId\": \"{{productId}}\",\n  \"tour\": {\n    \"title\": \"Khám phá Đà Nẵng\",\n    \"destination\": \"Đà Nẵng\",\n    \"highlights\": [\n      \"Sơn Trà\",\n      \"Mỹ Khê\"\n    ],\n    \"priceVnd\": 2990000,\n    \"callToAction\": \"Liên hệ đặt tour\"\n  },\n  \"images\": [\n    \"{{assetId}}\"\n  ],\n  \"config\": {\n    \"mode\": \"HYBRID\",\n    \"durationSeconds\": 40,\n    \"aspectRatio\": \"16:9\"\n  },\n  \"aiScenes\": 1,\n  \"maxAiCostUsd\": \"0.0000\",\n  \"allowLocalFallback\": false,\n  \"narration\": {\n    \"enabled\": true\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 - Jobs",
+      "item": [
+        {
+          "name": "Get Job Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const job = pm.response.json();",
+                  "pm.test(\"Known job status\", () => pm.expect([\"QUEUED\",\"PROCESSING\",\"RENDERING\",\"COMPLETED\",\"FAILED\",\"CANCELLED\"]).to.include(job.status));",
+                  "if (job.status === \"COMPLETED\") pm.test(\"Download URL available\", () => pm.expect(job.outputUrl).to.be.a(\"string\"));",
+                  "if (job.status === \"FAILED\") pm.test(\"Failure code available\", () => pm.expect(job.errorCode).to.be.a(\"string\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/{{jobId}}"
+          }
+        },
+        {
+          "name": "List Jobs",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Paginated job list\", () => pm.expect(pm.response.json().items).to.be.an(\"array\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos?page=1&pageSize=20"
+          }
+        },
+        {
+          "name": "Download Video",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"MP4 download\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"video/mp4\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/{{jobId}}/download",
+            "description": "Wait for COMPLETED before running. Use Send and Download to save the MP4."
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 - Negative Tests",
+      "item": [
+        {
+          "name": "Missing API Key",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"Error details returned\", () => pm.expect(pm.response.json()).to.have.property(\"detail\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/videos"
+          }
+        },
+        {
+          "name": "Invalid API Key",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"Error details returned\", () => pm.expect(pm.response.json()).to.have.property(\"detail\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "invalid-test-key"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos"
+          }
+        },
+        {
+          "name": "Invalid Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 422\", () => pm.response.to.have.status(422));",
+                  "pm.test(\"Error details returned\", () => pm.expect(pm.response.json()).to.have.property(\"detail\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/generate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"{{productId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Invalid Duration",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 422\", () => pm.response.to.have.status(422));",
+                  "pm.test(\"Error details returned\", () => pm.expect(pm.response.json()).to.have.property(\"detail\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/generate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"{{requestId}}-duration\",\n  \"productId\": \"{{productId}}\",\n  \"tour\": {\n    \"title\": \"Khám phá Đà Nẵng\",\n    \"destination\": \"Đà Nẵng\",\n    \"highlights\": [\n      \"Sơn Trà\",\n      \"Mỹ Khê\"\n    ],\n    \"priceVnd\": 2990000,\n    \"callToAction\": \"Liên hệ đặt tour\"\n  },\n  \"images\": [\n    \"{{assetId}}\"\n  ],\n  \"config\": {\n    \"mode\": \"LOCAL\",\n    \"durationSeconds\": 31,\n    \"aspectRatio\": \"16:9\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Invalid Asset URL",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 422\", () => pm.response.to.have.status(422));",
+                  "pm.test(\"Error details returned\", () => pm.expect(pm.response.json()).to.have.property(\"detail\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/generate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"{{requestId}}-bad-url\",\n  \"productId\": \"{{productId}}\",\n  \"tour\": {\n    \"title\": \"Khám phá Đà Nẵng\",\n    \"destination\": \"Đà Nẵng\",\n    \"highlights\": [\n      \"Sơn Trà\",\n      \"Mỹ Khê\"\n    ],\n    \"priceVnd\": 2990000,\n    \"callToAction\": \"Liên hệ đặt tour\"\n  },\n  \"images\": [\n    \"http://example.com/example.jpg\"\n  ],\n  \"config\": {\n    \"mode\": \"LOCAL\",\n    \"durationSeconds\": 40,\n    \"aspectRatio\": \"16:9\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Invalid Budget",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 422\", () => pm.response.to.have.status(422));",
+                  "pm.test(\"Error details returned\", () => pm.expect(pm.response.json()).to.have.property(\"detail\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/generate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"{{requestId}}-negative\",\n  \"productId\": \"{{productId}}\",\n  \"tour\": {\n    \"title\": \"Khám phá Đà Nẵng\",\n    \"destination\": \"Đà Nẵng\",\n    \"highlights\": [\n      \"Sơn Trà\",\n      \"Mỹ Khê\"\n    ],\n    \"priceVnd\": 2990000,\n    \"callToAction\": \"Liên hệ đặt tour\"\n  },\n  \"images\": [\n    \"{{assetId}}\"\n  ],\n  \"config\": {\n    \"mode\": \"HYBRID\",\n    \"durationSeconds\": 40,\n    \"aspectRatio\": \"16:9\"\n  },\n  \"maxAiCostUsd\": \"-1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Duplicate Request — First",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"offlineWorkerConfirmed\") !== \"true\") pm.execution.skipRequest();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 202\", () => pm.response.to.have.status(202));",
+                  "if (pm.response.code === 202) pm.environment.set(\"duplicateJobId\", pm.response.json().jobId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/generate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"{{requestId}}-duplicate\",\n  \"productId\": \"{{productId}}\",\n  \"tour\": {\n    \"title\": \"Khám phá Đà Nẵng\",\n    \"destination\": \"Đà Nẵng\",\n    \"highlights\": [\n      \"Sơn Trà\",\n      \"Mỹ Khê\"\n    ],\n    \"priceVnd\": 2990000,\n    \"callToAction\": \"Liên hệ đặt tour\"\n  },\n  \"images\": [\n    \"{{assetId}}\"\n  ],\n  \"config\": {\n    \"mode\": \"LOCAL\",\n    \"durationSeconds\": 40,\n    \"aspectRatio\": \"16:9\"\n  },\n  \"narration\": {\n    \"enabled\": false\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Duplicate Request — Same Payload",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"offlineWorkerConfirmed\") !== \"true\") pm.execution.skipRequest();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 202\", () => pm.response.to.have.status(202));",
+                  "pm.test(\"Existing job reused\", () => pm.expect(pm.response.json().jobId).to.equal(pm.environment.get(\"duplicateJobId\")));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/generate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"{{requestId}}-duplicate\",\n  \"productId\": \"{{productId}}\",\n  \"tour\": {\n    \"title\": \"Khám phá Đà Nẵng\",\n    \"destination\": \"Đà Nẵng\",\n    \"highlights\": [\n      \"Sơn Trà\",\n      \"Mỹ Khê\"\n    ],\n    \"priceVnd\": 2990000,\n    \"callToAction\": \"Liên hệ đặt tour\"\n  },\n  \"images\": [\n    \"{{assetId}}\"\n  ],\n  \"config\": {\n    \"mode\": \"LOCAL\",\n    \"durationSeconds\": 40,\n    \"aspectRatio\": \"16:9\"\n  },\n  \"narration\": {\n    \"enabled\": false\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Duplicate Request — Changed Payload",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"offlineWorkerConfirmed\") !== \"true\") pm.execution.skipRequest();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", () => pm.response.to.have.status(409));",
+                  "pm.test(\"Error details returned\", () => pm.expect(pm.response.json()).to.have.property(\"detail\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{serviceApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/generate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"{{requestId}}-duplicate\",\n  \"productId\": \"{{productId}}\",\n  \"tour\": {\n    \"title\": \"Khám phá Đà Nẵng\",\n    \"destination\": \"Đà Nẵng\",\n    \"highlights\": [\n      \"Sơn Trà\",\n      \"Mỹ Khê\"\n    ],\n    \"priceVnd\": 2990000,\n    \"callToAction\": \"Liên hệ đặt tour\"\n  },\n  \"images\": [\n    \"{{assetId}}\"\n  ],\n  \"config\": {\n    \"mode\": \"LOCAL\",\n    \"durationSeconds\": 35,\n    \"aspectRatio\": \"16:9\"\n  },\n  \"narration\": {\n    \"enabled\": false\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Tenant Isolation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Error details returned\", () => pm.expect(pm.response.json()).to.have.property(\"detail\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Service-API-Key",
+                "value": "{{otherTenantApiKey}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/videos/{{duplicateJobId}}",
+            "description": "Set a valid service key for a different tenant and run Duplicate Request — First as the primary tenant."
+          }
+        }
+      ]
+    }
+  ]
+}
